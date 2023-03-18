@@ -1,6 +1,5 @@
-use crate::app::App;
 use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
+    event::{self, DisableMouseCapture, EnableMouseCapture, Event},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
@@ -14,19 +13,22 @@ use tui::{
     Terminal,
 };
 
+use crate::app::App;
+
 pub fn run(tick_rate: Duration) -> Result<(), Box<dyn Error>> {
-    // setup terminal
+    // Setup terminal
     enable_raw_mode()?;
     let mut stdout = io::stdout();
     execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
+
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
-    // create app and run it
-    let app = App::new("Hello title");
+    // Create app and run it
+    let app = App::new();
     let res = run_app(&mut terminal, app, tick_rate);
 
-    // restore terminal
+    // Restore terminal
     disable_raw_mode()?;
     execute!(
         terminal.backend_mut(),
