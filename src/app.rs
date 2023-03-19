@@ -265,7 +265,10 @@ impl App<'_> {
                 KeyCode::Enter => self.state = AppState::Play,
                 _ => {}
             },
-            _ => {}
+            AppState::Play => match code {
+                KeyCode::Esc => self.should_quit = true,
+                _ => {}
+            },
         }
     }
 }
