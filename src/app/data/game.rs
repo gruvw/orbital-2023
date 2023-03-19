@@ -9,14 +9,26 @@ pub const COL_RANGE: RangeInclusive<u8> = 1..=11;
 
 const COL_ALPHABET: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
+// Every end of turn test this
+pub const RACE_PROB: f64 = 1.0 / 5.0;
+
 // Per team
 pub const MIN_PLAYERS: u8 = 1;
 pub const MAX_PLAYERS: u8 = 3;
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub enum AiSide {
     For,
     Against,
+}
+
+impl AiSide {
+    pub fn switch(&self) -> AiSide {
+        match self {
+            Self::For => AiSide::Against,
+            Self::Against => AiSide::For,
+        }
+    }
 }
 
 impl Distribution<AiSide> for Standard {
@@ -44,8 +56,15 @@ impl Game {
             for_ai: None,
             against_ai: None,
             center_capture: Some(Capture::new(AiSide::Against)),
-            race: Some(Race::new()),
+            race: None,
             turn: rng.gen(),
+        }
+    }
+
+    pub fn get_turn(&mut self) -> Option<&mut Side> {
+        match self.turn {
+            AiSide::For => self.for_ai.as_mut(),
+            AiSide::Against => self.against_ai.as_mut(),
         }
     }
 }

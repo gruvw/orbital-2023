@@ -39,11 +39,20 @@ impl Game {
 
         let progress_chunks = Layout::default()
             .direction(Direction::Vertical)
-            .constraints([Constraint::Length(1), Constraint::Length(1)].as_ref())
+            .constraints(
+                [
+                    Constraint::Length(1),
+                    Constraint::Length(2),
+                    Constraint::Length(1),
+                    Constraint::Length(2),
+                    Constraint::Length(1),
+                ]
+                .as_ref(),
+            )
             .margin(1)
             .split(rect);
 
-        f.render_widget(gauge_from(self, AiSide::For), progress_chunks[0]);
-        f.render_widget(gauge_from(self, AiSide::Against), progress_chunks[1]);
+        f.render_widget(gauge_from(self, AiSide::For), progress_chunks[1]);
+        f.render_widget(gauge_from(self, AiSide::Against), progress_chunks[3]);
     }
 }

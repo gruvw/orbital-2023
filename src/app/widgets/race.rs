@@ -16,10 +16,13 @@ use crate::app::data::{
 
 impl Game {
     pub fn draw_race<B: Backend>(&self, f: &mut tui::Frame<B>, rect: Rect) {
-        let race_block = Block::default()
+        let mut race_block = Block::default()
             .title(" Race ")
             .title_alignment(Alignment::Left)
             .borders(Borders::ALL);
+        if let Some(_) = &self.race {
+            race_block = race_block.style(Style::default().fg(Color::Magenta));
+        };
         f.render_widget(race_block, rect);
 
         let chunks = Layout::default()
@@ -39,7 +42,7 @@ impl Game {
                 ),
                 Span::from(format!(
                     " ! First team there gains {} points.",
-                    race::RACE_POINTS
+                    race::RACE_POINTS,
                 )),
             ],
             None => vec![Span::styled("No race for the moment", Style::default())],

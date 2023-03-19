@@ -1,4 +1,5 @@
 pub mod capture;
+pub mod keys;
 pub mod progress;
 pub mod race;
 pub mod setup;

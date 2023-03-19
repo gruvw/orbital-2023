@@ -9,8 +9,8 @@ use rand::{distributions::Standard, prelude::Distribution, Rng};
 use super::game::Position;
 
 pub const SECS_IN_MIN: u64 = 60;
-const RACE_DURATION: Duration = Duration::from_secs(2 * SECS_IN_MIN);
-pub const RACE_POINTS: u8 = 10;
+const RACE_DURATION: Duration = Duration::from_secs(10);
+pub const RACE_POINTS: u32 = 5;
 
 pub struct Race {
     start: Instant,

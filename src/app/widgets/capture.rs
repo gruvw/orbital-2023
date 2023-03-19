@@ -14,8 +14,11 @@ use crate::app::data::{
 
 fn capture_from(capture: &Capture) -> Paragraph {
     Paragraph::new(Span::styled(
-        capture.count().to_string(),
-        Style::default().add_modifier(Modifier::BOLD),
+        format!(" {} ", capture.count().to_string()),
+        Style::default()
+            .add_modifier(Modifier::BOLD)
+            .bg(capture.ai_side.color())
+            .fg(Color::Black),
     ))
     .style(Style::default().fg(capture.ai_side.color()))
     .alignment(Alignment::Center)
@@ -26,7 +29,8 @@ impl Game {
         let block = Block::default()
             .title(" Captures ")
             .title_alignment(Alignment::Left)
-            .borders(Borders::ALL);
+            .borders(Borders::ALL)
+            .border_style(Style::default().fg(Color::Yellow));
         f.render_widget(block, rect);
 
         let capture_chunk = Layout::default()
@@ -44,13 +48,13 @@ impl Game {
 
         let for_ai_block = Block::default()
             .title("For AI Captures")
-            .title_alignment(Alignment::Left);
+            .title_alignment(Alignment::Center);
         let center_capture_block = Block::default()
             .title("Center")
             .title_alignment(Alignment::Center);
         let against_ai_block = Block::default()
             .title("Against AI Captures")
-            .title_alignment(Alignment::Right);
+            .title_alignment(Alignment::Center);
 
         f.render_widget(
             capture_from(&self.for_ai.as_ref().unwrap().capture).block(for_ai_block),
