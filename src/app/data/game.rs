@@ -14,6 +14,8 @@ const COL_ALPHABET: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 // Every end of turn test this
 pub const RACE_PROB: f64 = 1.0 / 5.0;
 
+pub const CHALLENGE_POINTS: u32 = 3;
+
 // Per team
 pub const MIN_PLAYERS: u8 = 1;
 pub const MAX_PLAYERS: u8 = 3;

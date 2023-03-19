@@ -15,7 +15,10 @@ use tui::{
 use self::{
     data::{
         capture::{capture_position, Capture},
-        game::{AiSide, Game, Position, DATABASE_POINTS, MAX_PLAYERS, MIN_PLAYERS, RACE_PROB},
+        game::{
+            AiSide, Game, Position, CHALLENGE_POINTS, DATABASE_POINTS, MAX_PLAYERS, MIN_PLAYERS,
+            RACE_PROB,
+        },
         race::{Race, RACE_POINTS},
         side::Side,
         vpn::vpn_position,
@@ -34,6 +37,7 @@ pub enum AppState {
     CapturePositions,
     Play,
     Finished(AiSide),
+    Challenge(&'static str),
 }
 
 pub struct App<'a> {
@@ -113,6 +117,9 @@ impl App<'_> {
                 self.game.draw_captures(f, chunks[2]);
                 self.game.draw_race(f, chunks[4]);
                 self.game.draw_keys(f, chunks[6]);
+            }
+            AppState::Challenge(text) => {
+                self.draw_challenge(f, chunks[1], text);
             }
             AppState::Finished(ai_side) => {
                 self.draw_finished(f, chunks[1], ai_side);
@@ -300,6 +307,8 @@ impl App<'_> {
                                         }
                                     }
                                 }
+
+                                'f' => self.state = AppState::Challenge(self.game.pick_challenge()),
                                 _ => {}
                             };
                         }
@@ -307,6 +316,35 @@ impl App<'_> {
                 }
                 _ => {}
             },
+            AppState::Challenge(text) => {
+                match code {
+                    KeyCode::Char('f') => {
+                        // Pick a different challenge
+                        self.state = AppState::Challenge(loop {
+                            let challenge = self.game.pick_challenge();
+                            if challenge != *text {
+                                break challenge;
+                            }
+                        })
+                    }
+
+                    KeyCode::Char('q') => self.state = AppState::Play,
+
+                    KeyCode::Char('1') => {
+                        if let Some(ref mut for_ai) = self.game.for_ai {
+                            for_ai.advance(CHALLENGE_POINTS)
+                        }
+                        self.state = AppState::Play
+                    }
+                    KeyCode::Char('0') => {
+                        if let Some(ref mut against_ai) = self.game.against_ai {
+                            against_ai.advance(CHALLENGE_POINTS)
+                        }
+                        self.state = AppState::Play
+                    }
+                    _ => {}
+                }
+            }
             AppState::Finished(_) => {}
         }
     }

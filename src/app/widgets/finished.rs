@@ -6,10 +6,7 @@ use tui::{
     widgets::{Block, Borders, Paragraph},
 };
 
-use crate::app::{
-    data::game::{AiSide, MAX_PLAYERS, MIN_PLAYERS},
-    App, AppState,
-};
+use crate::app::{data::game::AiSide, App};
 
 impl App<'_> {
     pub fn draw_finished<B: Backend>(
@@ -129,10 +126,5 @@ impl App<'_> {
                 .block(credits_block),
             credits_chucks[0],
         );
-
-        // let credits_block = Block::default()
-        //     .title("Credits")
-        //     .title_alignment(Alignment::Left)
-        //     .borders(Borders::ALL);
     }
 }

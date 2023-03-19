@@ -1,6 +1,3 @@
-use std::fmt::Debug;
-
-use chrono::Duration;
 use tui::{
     backend::Backend,
     layout::{
@@ -14,8 +11,8 @@ use tui::{
 };
 
 use crate::app::data::{
-    game::{AiSide, Game},
-    race::{self, Race, SECS_IN_MIN},
+    game::Game,
+    race::{self, SECS_IN_MIN},
 };
 
 impl Game {

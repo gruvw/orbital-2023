@@ -37,17 +37,17 @@ impl Game {
         let col1 = vec![
             Spans::from(vec![
                 Span::styled("[ESC]", key_style),
-                Span::from(": exit game"),
+                Span::styled(": Exit game", Style::default().add_modifier(Modifier::BOLD)),
             ]),
             Spans::from(vec![
                 Span::styled("[TAB]", key_style),
-                Span::from(": end turn"),
+                Span::from(": End turn"),
             ]),
             Spans::from(""),
             Spans::from(vec![
                 Span::styled("[F]", key_style),
-                Span::from(": start a challenge"),
-            ]), // TODO
+                Span::from(": Start a challenge (Get ready!)"),
+            ]),
             Spans::from(""),
             Spans::from(vec![
                 Span::styled("[1]", key_style),
@@ -78,11 +78,11 @@ impl Game {
             Spans::from(""),
             Spans::from(vec![
                 Span::styled("[5]", key_style),
-                Span::from(" Decrease points for AI team"),
+                Span::from(": Decrease points for AI team"),
             ]),
             Spans::from(vec![
                 Span::styled("[7]", key_style),
-                Span::from(" Decrease points for non-AI team"),
+                Span::from(": Decrease points for non-AI team"),
             ]),
         ];
         let col3 = vec![

@@ -13,7 +13,7 @@
 - [X] Race win
 - [X] Database increase
 - [X] Player on capture (increase, decrease)
-- [ ] Ask for challenge (pop up on screen => key to tell which team won)
+- [X] Ask for challenge (pop up on screen => key to tell which team won)
 - [X] Quit app
 
 ### Layout
@@ -24,16 +24,15 @@
 - [X] Race: display current race point of position and gain (with timer on screen)
 - [X] Capture points on end of round
 - [X] Win screen
-- [ ] Challenges
+- [X] Challenges
 
-## Others
+## Others (ameliorations)
 
-- [ ] Pretty ASCII graphic start
+- [X] Pretty ASCII graphic end
 - [ ] Story dialogs
 - [ ] Quit confirm (pop up blocking)
 - [ ] Avantages passifs équipe minoritaire
 - [ ] Capture multiplier for center
-- [ ] Points gain detail at end of turn (one side or none)
+- [ ] Points gain detail at end of turn (one side or none), notify change on key press
 - [ ] Pause
 - [ ] README
-- [ ] Notify change on key press

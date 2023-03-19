@@ -1,4 +1,5 @@
 pub mod capture;
+pub mod challenge;
 pub mod finished;
 pub mod keys;
 pub mod progress;

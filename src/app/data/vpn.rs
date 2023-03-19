@@ -1,4 +1,4 @@
-use rand::{distributions::Standard, prelude::Distribution, rngs::ThreadRng, Rng};
+use rand::{rngs::ThreadRng, Rng};
 
 use super::game::{AiSide, Position, ROW_RANGE};
 
