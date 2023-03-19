@@ -14,7 +14,7 @@ use tui::{
 
 use self::{
     data::{
-        capture::{capture_position, Capture},
+        capture::{capture_position, Capture, CAPTURE_POINTS, CENTER_CAPTURE_MULTIPLIER},
         game::{
             AiSide, Game, Position, CHALLENGE_POINTS, DATABASE_POINTS, MAX_PLAYERS, MIN_PLAYERS,
             RACE_PROB,
@@ -23,7 +23,7 @@ use self::{
         side::Side,
         vpn::vpn_position,
     },
-    widgets::{capture::CAPTURE_POINTS, title::Title},
+    widgets::title::Title,
 };
 
 pub trait Drawable {
@@ -216,7 +216,7 @@ impl App<'_> {
             },
             AppState::Play => match code {
                 KeyCode::Tab => {
-                    // Change turn
+                    // Change turn (SWITCH TEAM)
                     if let Some(ref mut side) = self.game.get_turn() {
                         side.nb_rounds += 1;
                     }
@@ -230,7 +230,12 @@ impl App<'_> {
                         }
                     }
                     if let Some(ref mut side) = self.game.get_turn() {
-                        side.advance(CAPTURE_POINTS * (side.capture.count() + center_captured));
+                        side.advance(
+                            CAPTURE_POINTS
+                                * (side.capture.count()
+                                    + (CENTER_CAPTURE_MULTIPLIER * center_captured as f32).round()
+                                        as u32),
+                        );
                     }
 
                     if let None = self.game.race {
@@ -312,6 +317,7 @@ impl App<'_> {
                                 _ => {}
                             };
                         }
+                        // WHY ARE YOU EVEN READING THIS ? IT IS HORRIBLE...
                     }
                 }
                 _ => {}

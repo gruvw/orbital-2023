@@ -7,7 +7,7 @@ use super::{capture::Capture, race::Race, side::Side};
 pub const ROW_RANGE: RangeInclusive<u8> = 1..=7;
 pub const COL_RANGE: RangeInclusive<u8> = 1..=11;
 
-pub const DATABASE_POINTS: u32 = 10;
+pub const DATABASE_POINTS: u32 = 7;
 
 const COL_ALPHABET: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 

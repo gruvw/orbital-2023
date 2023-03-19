@@ -1,6 +1,6 @@
 use super::{capture::Capture, game::AiSide};
 
-pub const TOTAL_PROGRESS: u32 = 50;
+pub const TOTAL_PROGRESS: u32 = 101;
 
 pub struct Side {
     pub nb_players: u8,

@@ -29,10 +29,11 @@
 ## Others (ameliorations)
 
 - [X] Pretty ASCII graphic end
+- [X] Capture multiplier for center
+- [ ] Better Header
 - [ ] Story dialogs
 - [ ] Quit confirm (pop up blocking)
 - [ ] Avantages passifs équipe minoritaire
-- [ ] Capture multiplier for center
 - [ ] Points gain detail at end of turn (one side or none), notify change on key press
 - [ ] Pause
 - [ ] README

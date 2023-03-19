@@ -10,6 +10,9 @@ pub const ILLEGAL_CAPTURE_POSITIONS: &'static [Position] = &[
     Position { row: 5, col: 6 },  // Middle
 ];
 
+pub const CENTER_CAPTURE_MULTIPLIER: f32 = 1.3;
+pub const CAPTURE_POINTS: u32 = 2;
+
 pub struct Capture {
     count: u32,
     pub ai_side: AiSide,
