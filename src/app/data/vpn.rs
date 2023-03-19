@@ -11,7 +11,7 @@ impl AiSide {
     }
 }
 
-pub fn VPN_position(rng: &mut ThreadRng, ai_side: AiSide) -> Position {
+pub fn vpn_position(rng: &mut ThreadRng, ai_side: AiSide) -> Position {
     Position {
         row: rng.gen_range(ROW_RANGE),
         col: ai_side.vpn_column(),

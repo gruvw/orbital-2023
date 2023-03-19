@@ -53,7 +53,7 @@ impl Game {
             .title_alignment(Alignment::Right);
 
         f.render_widget(
-            capture_from(&self.for_ai.capture).block(for_ai_block),
+            capture_from(&self.for_ai.as_ref().unwrap().capture).block(for_ai_block),
             capture_chunk[0],
         );
         match &self.center_capture {
@@ -64,7 +64,7 @@ impl Game {
             None => f.render_widget(center_capture_block, capture_chunk[1]),
         };
         f.render_widget(
-            capture_from(&self.against_ai.capture).block(against_ai_block),
+            capture_from(&self.against_ai.as_ref().unwrap().capture).block(against_ai_block),
             capture_chunk[2],
         );
     }

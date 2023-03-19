@@ -1,6 +1,7 @@
 pub mod capture;
 pub mod progress;
 pub mod race;
+pub mod setup;
 pub mod side;
 pub mod title;
 

@@ -1,8 +1,11 @@
 mod data;
 mod widgets;
 
+use std::borrow::BorrowMut;
+
 use crossterm::event::KeyCode;
 
+use rand::Rng;
 use tui::{
     backend::Backend,
     layout::{Constraint, Direction, Layout, Rect},
@@ -11,7 +14,12 @@ use tui::{
 use unicode_width::UnicodeWidthStr;
 
 use self::{
-    data::game::{AiSide, Game},
+    data::{
+        capture::capture_position,
+        game::{AiSide, Game, Position, MAX_PLAYERS, MIN_PLAYERS},
+        side::Side,
+        vpn::vpn_position,
+    },
     widgets::title::Title,
 };
 
@@ -23,72 +31,94 @@ enum InputMode {
     Insert,
 }
 
-enum AppState {
+#[derive(Clone)]
+pub enum AppState {
     PlayerInput(AiSide),
     VPNPositions,
     CapturePositions,
+    Play,
 }
+
+// pub struct Setup {
+//     nb_player: String,
+// }
 
 pub struct App<'a> {
     title: Title<'a>,
     game: Game,
-    /// Current value of the input box
-    // input: String,
-    // /// Current input mode
+    state: AppState,
     input_mode: InputMode,
-    // /// History of recorded messages
-    // messages: Vec<String>,
+    vpn_positions: Option<(Position, Position)>,
+    capture_positions: Option<(Position, Position, Position)>,
     pub should_quit: bool,
 }
 
 impl App<'_> {
     pub fn new() -> App<'static> {
-        let game = Game::new();
         App {
             title: Title::new("Welcome to the best Game CyberConnect!"),
-            game,
+            game: Game::new(),
+            state: AppState::PlayerInput(AiSide::For),
             input_mode: InputMode::Normal,
+            // input: String::new(),
             should_quit: false,
+            vpn_positions: None,
+            capture_positions: None,
         }
     }
 }
 
 impl App<'_> {
-    pub fn draw<B: Backend>(&self, f: &mut Frame<B>) {
+    pub fn draw<B: Backend>(&mut self, f: &mut Frame<B>) {
         let chunks = Layout::default()
             .direction(Direction::Vertical)
-            .constraints(
-                [
-                    Constraint::Length(2),
-                    Constraint::Length(4),
-                    Constraint::Length(4),
-                    Constraint::Length(3),
-                    Constraint::Min(0),
-                ]
-                .as_ref(),
-            )
+            .constraints([Constraint::Length(2), Constraint::Min(10)].as_ref())
             .split(f.size());
 
-        let progress_chunks = Layout::default()
-            .direction(Direction::Horizontal)
-            .constraints(
-                [
-                    Constraint::Ratio(1, 4),
-                    Constraint::Ratio(2, 4),
-                    Constraint::Ratio(1, 4),
-                ]
-                .as_ref(),
-            )
-            .split(chunks[1]);
-
         self.title.draw(self, f, chunks[0]);
-        self.game.draw_side(f, progress_chunks[0], AiSide::For);
-        self.game.draw_progress(f, progress_chunks[1]);
-        self.game.draw_side(f, progress_chunks[2], AiSide::Against);
-        self.game.draw_captures(f, chunks[2]);
-        self.game.draw_race(f, chunks[3]);
-        // self.game.for_ai.draw(self, f, progress_chunks[0]);
-        // self.game.against_ai.draw(self, f, progress_chunks[2]);
+
+        match self.state.clone() {
+            AppState::PlayerInput(ai_side) => {
+                self.input_mode = InputMode::Insert;
+                self.draw_setup(f, chunks[1], ai_side);
+                return;
+            }
+            AppState::VPNPositions | AppState::CapturePositions => {
+                self.draw_setup(f, chunks[1], AiSide::For);
+            }
+            AppState::Play => {
+                let chunks = Layout::default()
+                    .direction(Direction::Vertical)
+                    .constraints(
+                        [
+                            Constraint::Length(4),
+                            Constraint::Length(4),
+                            Constraint::Length(3),
+                            Constraint::Min(0),
+                        ]
+                        .as_ref(),
+                    )
+                    .split(chunks[1]);
+
+                let progress_chunks = Layout::default()
+                    .direction(Direction::Horizontal)
+                    .constraints(
+                        [
+                            Constraint::Ratio(1, 4),
+                            Constraint::Ratio(2, 4),
+                            Constraint::Ratio(1, 4),
+                        ]
+                        .as_ref(),
+                    )
+                    .split(chunks[0]);
+
+                self.game.draw_side(f, progress_chunks[0], AiSide::For);
+                self.game.draw_progress(f, progress_chunks[1]);
+                self.game.draw_side(f, progress_chunks[2], AiSide::Against);
+                self.game.draw_captures(f, chunks[1]);
+                self.game.draw_race(f, chunks[2]);
+            }
+        }
 
         // let other_block = Block::default().title("Others");
         // f.render_widget(other_block, chunks[1]);
@@ -183,28 +213,59 @@ impl App<'_> {
     }
 
     pub fn on_key(&mut self, code: KeyCode) {
-        // match self.input_mode {
-        //     InputMode::Normal => match code {
-        //         KeyCode::Char('e') => {
-        //             self.input_mode = InputMode::Editing;
-        //         }
-        //         _ => {}
-        //     },
-        //     InputMode::Editing => match code {
-        //         KeyCode::Enter => {
-        //             self.messages.push(self.input.drain(..).collect());
-        //         }
-        //         KeyCode::Char(c) => {
-        //             self.input.push(c);
-        //         }
-        //         KeyCode::Backspace => {
-        //             self.input.pop();
-        //         }
-        //         KeyCode::Esc => {
-        //             self.input_mode = InputMode::Normal;
-        //         }
-        //         _ => {}
-        //     },
-        // }
+        match &self.state {
+            AppState::PlayerInput(ai_side) => match code {
+                KeyCode::Enter => match ai_side {
+                    AiSide::For => {
+                        if let Some(_) = self.game.for_ai {
+                            self.state = AppState::PlayerInput(AiSide::Against)
+                        }
+                    }
+                    AiSide::Against => {
+                        if let Some(_) = self.game.against_ai {
+                            let mut rng = rand::thread_rng();
+                            self.vpn_positions = Some((
+                                vpn_position(rng.borrow_mut(), AiSide::For),
+                                vpn_position(rng.borrow_mut(), AiSide::Against),
+                            ));
+                            self.state = AppState::VPNPositions
+                        }
+                    }
+                },
+                KeyCode::Char(c) => {
+                    if let Some(d) = c.to_digit(10) {
+                        let d = d as u8;
+                        if MIN_PLAYERS <= d && d <= MAX_PLAYERS {
+                            match ai_side {
+                                AiSide::For => {
+                                    self.game.for_ai = Some(Side::new(d as u8, AiSide::For))
+                                }
+                                AiSide::Against => {
+                                    self.game.against_ai = Some(Side::new(d as u8, AiSide::Against))
+                                }
+                            }
+                        }
+                    }
+                }
+                _ => {}
+            },
+            AppState::VPNPositions => match code {
+                KeyCode::Enter => {
+                    let mut rng = rand::thread_rng();
+                    self.capture_positions = Some((
+                        capture_position(rng.borrow_mut(), AiSide::For),
+                        capture_position(rng.borrow_mut(), AiSide::Against),
+                        capture_position(rng.clone().borrow_mut(), rng.gen()),
+                    ));
+                    self.state = AppState::CapturePositions;
+                }
+                _ => {}
+            },
+            AppState::CapturePositions => match code {
+                KeyCode::Enter => self.state = AppState::Play,
+                _ => {}
+            },
+            _ => {}
+        }
     }
 }

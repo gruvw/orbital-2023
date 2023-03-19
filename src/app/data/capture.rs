@@ -33,10 +33,22 @@ impl Capture {
     }
 }
 
-pub fn capture_position(rng: &mut ThreadRng) -> Position {
+impl AiSide {
+    fn pos_inside(&self, pos: &Position) -> bool {
+        match self {
+            AiSide::For => pos.col < 6,
+            AiSide::Against => pos.col > 6,
+        }
+    }
+}
+
+pub fn capture_position(rng: &mut ThreadRng, ai_side: AiSide) -> Position {
     loop {
         let position = rng.gen();
-        if !ILLEGAL_CAPTURE_POSITIONS.contains(&position) {
+        if !ILLEGAL_CAPTURE_POSITIONS.contains(&position)
+            && (position.col < 5 || position.col > 7)
+            && ai_side.pos_inside(&position)
+        {
             return position;
         }
     }
