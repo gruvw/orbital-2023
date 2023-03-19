@@ -12,8 +12,8 @@ use crate::app::data::{
 
 fn gauge_from(game: &Game, ai_side: AiSide) -> Gauge {
     let progress = (match ai_side {
-        AiSide::For => game.for_ai.as_ref().unwrap().progress,
-        AiSide::Against => game.against_ai.as_ref().unwrap().progress,
+        AiSide::For => game.for_ai.as_ref().unwrap().progress(),
+        AiSide::Against => game.against_ai.as_ref().unwrap().progress(),
     } as f64)
         / (TOTAL_PROGRESS as f64);
     let label = format!("{:.2}%", progress * 100.0);

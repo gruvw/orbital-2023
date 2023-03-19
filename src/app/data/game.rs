@@ -7,6 +7,8 @@ use super::{capture::Capture, race::Race, side::Side};
 pub const ROW_RANGE: RangeInclusive<u8> = 1..=7;
 pub const COL_RANGE: RangeInclusive<u8> = 1..=11;
 
+pub const DATABASE_POINTS: u32 = 10;
+
 const COL_ALPHABET: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 // Every end of turn test this
@@ -55,7 +57,7 @@ impl Game {
         Game {
             for_ai: None,
             against_ai: None,
-            center_capture: Some(Capture::new(AiSide::Against)),
+            center_capture: None,
             race: None,
             turn: rng.gen(),
         }

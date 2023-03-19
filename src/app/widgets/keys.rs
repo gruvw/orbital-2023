@@ -1,22 +1,11 @@
-use std::fmt::Debug;
-
-use chrono::Duration;
 use tui::{
     backend::Backend,
-    layout::{
-        Alignment, Constraint,
-        Direction::{self, Horizontal},
-        Layout, Rect,
-    },
-    style::{Color, Modifier, Style},
-    text::{Span, Spans},
+    layout::{Alignment, Constraint, Direction, Layout, Rect},
+    text::Spans,
     widgets::{Block, Borders, Paragraph},
 };
 
-use crate::app::data::{
-    game::{AiSide, Game},
-    race::{self, Race, SECS_IN_MIN},
-};
+use crate::app::data::game::Game;
 
 impl Game {
     pub fn draw_keys<B: Backend>(&self, f: &mut tui::Frame<B>, rect: Rect) {
@@ -53,7 +42,7 @@ impl Game {
             Spans::from("[A]: Increase center capture for AI team"),
             Spans::from("[O]: Decrease center capture for AI team"),
             Spans::from("[S]: Increase center capture for non-AI team"),
-            Spans::from("[C]: Decrease center capture for non-AI team"),
+            Spans::from("[N]: Decrease center capture for non-AI team"),
             Spans::from(""),
             Spans::from("[5] Decrease points for AI team"),
             Spans::from("[7] Decrease points for non-AI team"),

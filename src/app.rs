@@ -14,13 +14,13 @@ use tui::{
 
 use self::{
     data::{
-        capture::capture_position,
-        game::{AiSide, Game, Position, MAX_PLAYERS, MIN_PLAYERS, RACE_PROB},
+        capture::{capture_position, Capture},
+        game::{AiSide, Game, Position, DATABASE_POINTS, MAX_PLAYERS, MIN_PLAYERS, RACE_PROB},
         race::{Race, RACE_POINTS},
         side::Side,
         vpn::vpn_position,
     },
-    widgets::title::Title,
+    widgets::{capture::CAPTURE_POINTS, title::Title},
 };
 
 pub trait Drawable {
@@ -84,8 +84,11 @@ impl App<'_> {
                     .constraints(
                         [
                             Constraint::Length(9), // Progress
+                            Constraint::Length(1),
                             Constraint::Length(4), // Captures
+                            Constraint::Length(1),
                             Constraint::Length(3), // Race
+                            Constraint::Length(1),
                             Constraint::Length(9), // Keys
                             Constraint::Min(0),
                         ]
@@ -98,7 +101,9 @@ impl App<'_> {
                     .constraints(
                         [
                             Constraint::Ratio(1, 4),
+                            Constraint::Length(1),
                             Constraint::Ratio(2, 4),
+                            Constraint::Length(1),
                             Constraint::Ratio(1, 4),
                         ]
                         .as_ref(),
@@ -106,11 +111,11 @@ impl App<'_> {
                     .split(chunks[0]);
 
                 self.game.draw_side(f, progress_chunks[0], AiSide::For);
-                self.game.draw_progress(f, progress_chunks[1]);
-                self.game.draw_side(f, progress_chunks[2], AiSide::Against);
-                self.game.draw_captures(f, chunks[1]);
-                self.game.draw_race(f, chunks[2]);
-                self.game.draw_keys(f, chunks[3]);
+                self.game.draw_progress(f, progress_chunks[2]);
+                self.game.draw_side(f, progress_chunks[4], AiSide::Against);
+                self.game.draw_captures(f, chunks[2]);
+                self.game.draw_race(f, chunks[4]);
+                self.game.draw_keys(f, chunks[6]);
             }
         }
     }
@@ -121,6 +126,12 @@ impl App<'_> {
         if let Some(race) = &self.game.race {
             if race.is_finished() {
                 self.game.race = None;
+            }
+        }
+
+        if let Some(ref mut center) = self.game.center_capture {
+            if center.count() == 0 {
+                self.game.center_capture = None;
             }
         }
     }
@@ -187,27 +198,96 @@ impl App<'_> {
                     }
                     self.game.turn = self.game.turn.switch();
 
+                    // Count capture points
+                    let mut center_captured = 0;
+                    if let Some(center) = &self.game.center_capture {
+                        if center.ai_side == self.game.turn {
+                            center_captured = center.count();
+                        }
+                    }
+                    if let Some(ref mut side) = self.game.get_turn() {
+                        side.advance(CAPTURE_POINTS * (side.capture.count() + center_captured));
+                    }
+
                     if let None = self.game.race {
                         if rng.gen_bool(RACE_PROB) {
                             self.game.race = Some(Race::new());
                         }
                     }
                 }
-                KeyCode::Char(c) => match c {
-                    '1' => {
-                        if let Some(ref mut for_ai) = self.game.for_ai {
-                            for_ai.progress += RACE_POINTS;
-                            self.game.race = None;
-                        }
-                    }
-                    '0' => {
+                KeyCode::Char(c) => {
+                    if let Some(ref mut for_ai) = self.game.for_ai {
                         if let Some(ref mut against_ai) = self.game.against_ai {
-                            against_ai.progress += RACE_POINTS;
-                            self.game.race = None;
+                            match c {
+                                '1' => {
+                                    for_ai.advance(RACE_POINTS);
+                                    self.game.race = None;
+                                }
+                                '0' => {
+                                    against_ai.advance(RACE_POINTS);
+                                    self.game.race = None;
+                                }
+
+                                '5' => for_ai.retreat(1),
+                                '7' => against_ai.retreat(1),
+
+                                'i' => for_ai.advance(DATABASE_POINTS),
+                                'd' => against_ai.advance(DATABASE_POINTS),
+
+                                'e' => for_ai.capture.add(),
+                                'u' => for_ai.capture.remove(),
+                                't' => against_ai.capture.add(),
+                                'h' => against_ai.capture.remove(),
+
+                                'a' => {
+                                    if let Some(ref mut center) = self.game.center_capture {
+                                        match center.ai_side {
+                                            AiSide::For => center.add(),
+                                            AiSide::Against => {
+                                                *center = Capture::new(AiSide::For);
+                                                center.add();
+                                            }
+                                        }
+                                    } else {
+                                        let mut center = Capture::new(AiSide::For);
+                                        center.add();
+                                        self.game.center_capture = Some(center);
+                                    }
+                                }
+                                'o' => {
+                                    if let Some(ref mut center) = self.game.center_capture {
+                                        if let AiSide::For = center.ai_side {
+                                            center.remove()
+                                        }
+                                    }
+                                }
+                                's' => {
+                                    if let Some(ref mut center) = self.game.center_capture {
+                                        match center.ai_side {
+                                            AiSide::Against => center.add(),
+                                            AiSide::For => {
+                                                *center = Capture::new(AiSide::Against);
+                                                center.add();
+                                            }
+                                        }
+                                    } else {
+                                        let mut center = Capture::new(AiSide::Against);
+                                        center.add();
+                                        self.game.center_capture = Some(center);
+                                    }
+                                }
+                                'n' => {
+                                    if let Some(ref mut center) = self.game.center_capture {
+                                        if let AiSide::Against = center.ai_side {
+                                            center.remove()
+                                        }
+                                    }
+                                }
+                                _ => {}
+                            };
                         }
                     }
-                    _ => {}
-                },
+                }
                 _ => {}
             },
         }

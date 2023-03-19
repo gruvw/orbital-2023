@@ -11,25 +11,27 @@ pub const ILLEGAL_CAPTURE_POSITIONS: &'static [Position] = &[
 ];
 
 pub struct Capture {
-    count: u16,
+    count: u32,
     pub ai_side: AiSide,
 }
 
 impl Capture {
     pub fn new(ai_side: AiSide) -> Capture {
-        Capture { count: 2, ai_side }
+        Capture { count: 0, ai_side }
     }
 
-    pub fn count(&self) -> u16 {
+    pub fn count(&self) -> u32 {
         self.count
     }
 
-    fn add(&mut self) {
+    pub fn add(&mut self) {
         self.count += 1;
     }
 
-    fn remove(&mut self) {
-        self.count -= 1;
+    pub fn remove(&mut self) {
+        if self.count >= 1 {
+            self.count -= 1;
+        }
     }
 }
 

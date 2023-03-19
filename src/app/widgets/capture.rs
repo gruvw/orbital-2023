@@ -12,6 +12,8 @@ use crate::app::data::{
     side::TOTAL_PROGRESS,
 };
 
+pub const CAPTURE_POINTS: u32 = 3;
+
 fn capture_from(capture: &Capture) -> Paragraph {
     Paragraph::new(Span::styled(
         format!(" {} ", capture.count().to_string()),

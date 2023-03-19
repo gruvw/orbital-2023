@@ -64,7 +64,7 @@ impl Game {
             ]),
             Spans::from(vec![
                 Span::from("Points (progress): "),
-                Span::styled(format!("{}", side.progress), style),
+                Span::styled(format!("{}", side.progress()), style),
             ]),
         ])
         .alignment(Alignment::Left);
