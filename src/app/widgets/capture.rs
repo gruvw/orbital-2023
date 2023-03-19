@@ -24,12 +24,18 @@ fn capture_from(capture: &Capture) -> Paragraph {
 
 impl Game {
     pub fn draw_captures<B: Backend>(&self, f: &mut tui::Frame<B>, rect: Rect) {
+        let marged = Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints([Constraint::Percentage(100)])
+            .horizontal_margin(30)
+            .split(rect)[0];
+
         let block = Block::default()
             .title(" Captures ")
             .title_alignment(Alignment::Left)
             .borders(Borders::ALL)
             .border_style(Style::default().fg(Color::Yellow));
-        f.render_widget(block, rect);
+        f.render_widget(block, marged);
 
         let capture_chunk = Layout::default()
             .direction(Direction::Horizontal)
@@ -42,7 +48,7 @@ impl Game {
                 .as_ref(),
             )
             .margin(1)
-            .split(rect);
+            .split(marged);
 
         let for_ai_block = Block::default()
             .title("For AI Captures")

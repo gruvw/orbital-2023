@@ -16,6 +16,7 @@ impl App<'_> {
         let chunks = Layout::default()
             .direction(Direction::Vertical)
             .margin(20)
+            .horizontal_margin(60)
             .constraints(
                 [
                     Constraint::Length(3), // For ai
@@ -67,13 +68,13 @@ impl App<'_> {
         };
 
         let for_ai_nb_player_prompt = Paragraph::new(Spans::from(vec![
-            Span::from("Number of players: "),
+            Span::from(" Number of players: "),
             for_ai_nb,
         ]))
         .block(for_ai_block.style(Style::default().fg(AiSide::For.color())));
 
         let against_ai_nb_player_prompt = Paragraph::new(Spans::from(vec![
-            Span::from("Number of players: "),
+            Span::from(" Number of players: "),
             against_ai_nb,
         ]))
         .block(against_ai_block.style(Style::default().fg(AiSide::Against.color())));
@@ -88,7 +89,7 @@ impl App<'_> {
         ) {
             (AppState::PlayerInput(_), None, _) => Span::styled("...", white),
             (AppState::PlayerInput(_), Some(_), None) => {
-                Span::styled("Press Enter to generate VPN postions", white)
+                Span::styled(" Press Enter to generate VPN postions", white)
             }
             (_, _, Some((p1, p2))) => Span::styled(
                 format!("{} {}", p1.to_string(), p2.to_string()),
@@ -103,7 +104,7 @@ impl App<'_> {
             .borders(Borders::ALL);
 
         let vpn_positions =
-            Paragraph::new(Spans::from(vec![Span::from("VPN positions: "), vpn_pos]))
+            Paragraph::new(Spans::from(vec![Span::from(" VPN positions: "), vpn_pos]))
                 .block(vpn_block);
 
         f.render_widget(
@@ -129,7 +130,7 @@ impl App<'_> {
             .borders(Borders::ALL);
 
         let capture_positions = Paragraph::new(Spans::from(vec![
-            Span::from("Capture point positions: "),
+            Span::from(" Capture point positions: "),
             capture_pos,
         ]))
         .block(capture_block);

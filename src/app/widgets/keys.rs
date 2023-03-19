@@ -1,7 +1,8 @@
 use tui::{
     backend::Backend,
     layout::{Alignment, Constraint, Direction, Layout, Rect},
-    text::Spans,
+    style::{Color, Modifier, Style},
+    text::{Span, Spans},
     widgets::{Block, Borders, Paragraph},
 };
 
@@ -29,32 +30,87 @@ impl Game {
             .margin(1)
             .split(rect);
 
+        let key_style = Style::default()
+            .add_modifier(Modifier::BOLD)
+            .fg(Color::Rgb(138, 138, 138));
+
         let col1 = vec![
-            Spans::from("[ESC]: exit game"),
-            Spans::from("[TAB]: end turn"),
+            Spans::from(vec![
+                Span::styled("[ESC]", key_style),
+                Span::from(": exit game"),
+            ]),
+            Spans::from(vec![
+                Span::styled("[TAB]", key_style),
+                Span::from(": end turn"),
+            ]),
             Spans::from(""),
-            Spans::from("[F]: start a challenge"), // TODO
+            Spans::from(vec![
+                Span::styled("[F]", key_style),
+                Span::from(": start a challenge"),
+            ]), // TODO
             Spans::from(""),
-            Spans::from("[1]: For AI team won race"),
-            Spans::from("[0]: Against AI team won race"),
+            Spans::from(vec![
+                Span::styled("[1]", key_style),
+                Span::from(": For AI team won race"),
+            ]),
+            Spans::from(vec![
+                Span::styled("[0]", key_style),
+                Span::from(": Against AI team won race"),
+            ]),
         ];
         let col2 = vec![
-            Spans::from("[A]: Increase center capture for AI team"),
-            Spans::from("[O]: Decrease center capture for AI team"),
-            Spans::from("[S]: Increase center capture for non-AI team"),
-            Spans::from("[N]: Decrease center capture for non-AI team"),
+            Spans::from(vec![
+                Span::styled("[A]", key_style),
+                Span::from(": Increase center capture for AI team"),
+            ]),
+            Spans::from(vec![
+                Span::styled("[O]", key_style),
+                Span::from(": Decrease center capture for AI team"),
+            ]),
+            Spans::from(vec![
+                Span::styled("[S]", key_style),
+                Span::from(": Increase center capture for non-AI team"),
+            ]),
+            Spans::from(vec![
+                Span::styled("[N]", key_style),
+                Span::from(": Decrease center capture for non-AI team"),
+            ]),
             Spans::from(""),
-            Spans::from("[5] Decrease points for AI team"),
-            Spans::from("[7] Decrease points for non-AI team"),
+            Spans::from(vec![
+                Span::styled("[5]", key_style),
+                Span::from(" Decrease points for AI team"),
+            ]),
+            Spans::from(vec![
+                Span::styled("[7]", key_style),
+                Span::from(" Decrease points for non-AI team"),
+            ]),
         ];
         let col3 = vec![
-            Spans::from("[E]: Increase capture for AI team"),
-            Spans::from("[U]: Decrease capture for AI team"),
-            Spans::from("[T]: Increase capture for non-AI team"),
-            Spans::from("[H]: Decrease capture for non-AI team"),
+            Spans::from(vec![
+                Span::styled("[E]", key_style),
+                Span::from(": Increase capture for AI team"),
+            ]),
+            Spans::from(vec![
+                Span::styled("[U]", key_style),
+                Span::from(": Decrease capture for AI team"),
+            ]),
+            Spans::from(vec![
+                Span::styled("[T]", key_style),
+                Span::from(": Increase capture for non-AI team"),
+            ]),
+            Spans::from(vec![
+                Span::styled("[H]", key_style),
+                Span::from(": Decrease capture for non-AI team"),
+            ]),
             Spans::from(""),
-            Spans::from("[I]: For AI team placed Database"),
-            Spans::from("[D]: Against AI team placed Database"),
+            Spans::from(vec![
+                Span::styled("[I]", key_style),
+                Span::from(": For AI team placed Database"),
+            ]),
+            Spans::from(vec![
+                Span::styled("[D]", key_style),
+                Span::from(": Against AI team placed Database"),
+            ]),
         ];
 
         f.render_widget(

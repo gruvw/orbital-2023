@@ -3,7 +3,11 @@ use std::fmt::Debug;
 use chrono::Duration;
 use tui::{
     backend::Backend,
-    layout::{Alignment, Constraint, Direction::Horizontal, Layout, Rect},
+    layout::{
+        Alignment, Constraint,
+        Direction::{self, Horizontal},
+        Layout, Rect,
+    },
     style::{Color, Modifier, Style},
     text::{Span, Spans},
     widgets::{Block, Borders, Paragraph},
@@ -16,6 +20,12 @@ use crate::app::data::{
 
 impl Game {
     pub fn draw_race<B: Backend>(&self, f: &mut tui::Frame<B>, rect: Rect) {
+        let marged = Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints([Constraint::Percentage(100)])
+            .horizontal_margin(45)
+            .split(rect)[0];
+
         let mut race_block = Block::default()
             .title(" Race ")
             .title_alignment(Alignment::Left)
@@ -23,13 +33,17 @@ impl Game {
         if let Some(_) = &self.race {
             race_block = race_block.style(Style::default().fg(Color::Magenta));
         };
-        f.render_widget(race_block, rect);
+        f.render_widget(race_block, marged);
 
         let chunks = Layout::default()
             .direction(Horizontal)
-            .constraints([Constraint::Ratio(2, 3), Constraint::Ratio(1, 3)].as_ref())
+            .constraints(if let Some(_) = &self.race {
+                [Constraint::Ratio(3, 4), Constraint::Ratio(1, 4)]
+            } else {
+                [Constraint::Ratio(4, 4), Constraint::Ratio(0, 4)]
+            })
             .margin(1)
-            .split(rect);
+            .split(marged);
 
         let text = match &self.race {
             Some(race) => vec![
