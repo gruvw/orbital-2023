@@ -23,7 +23,7 @@
 - [X] Nb player on captures
 - [X] Race: display current race point of position and gain (with timer on screen)
 - [X] Capture points on end of round
-- [ ] Win screen
+- [X] Win screen
 - [ ] Challenges
 
 ## Others

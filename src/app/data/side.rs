@@ -38,4 +38,8 @@ impl Side {
     pub fn progress(&self) -> u32 {
         self.progress
     }
+
+    pub fn has_won(&self) -> bool {
+        self.progress() >= TOTAL_PROGRESS
+    }
 }

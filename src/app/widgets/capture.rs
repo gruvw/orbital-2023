@@ -3,14 +3,10 @@ use tui::{
     layout::{Alignment, Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     text::Span,
-    widgets::{Block, Borders, Gauge, Paragraph},
+    widgets::{Block, Borders, Paragraph},
 };
 
-use crate::app::data::{
-    capture::Capture,
-    game::{AiSide, Game},
-    side::TOTAL_PROGRESS,
-};
+use crate::app::data::{capture::Capture, game::Game};
 
 pub const CAPTURE_POINTS: u32 = 3;
 

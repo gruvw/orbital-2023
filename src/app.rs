@@ -33,11 +33,8 @@ pub enum AppState {
     VPNPositions,
     CapturePositions,
     Play,
+    Finished(AiSide),
 }
-
-// pub struct Setup {
-//     nb_player: String,
-// }
 
 pub struct App<'a> {
     title: Title<'a>,
@@ -65,7 +62,7 @@ impl App<'_> {
     pub fn draw<B: Backend>(&mut self, f: &mut Frame<B>) {
         let chunks = Layout::default()
             .direction(Direction::Vertical)
-            .constraints([Constraint::Length(2), Constraint::Min(10)].as_ref())
+            .constraints([Constraint::Length(2), Constraint::Max(80)].as_ref())
             .split(f.size());
 
         self.title.draw(self, f, chunks[0]);
@@ -117,6 +114,9 @@ impl App<'_> {
                 self.game.draw_race(f, chunks[4]);
                 self.game.draw_keys(f, chunks[6]);
             }
+            AppState::Finished(ai_side) => {
+                self.draw_finished(f, chunks[1], ai_side);
+            }
         }
     }
 }
@@ -134,9 +134,27 @@ impl App<'_> {
                 self.game.center_capture = None;
             }
         }
+
+        // Winning condition
+        if let Some(ref mut for_ai) = self.game.for_ai {
+            if for_ai.has_won() {
+                self.state = AppState::Finished(AiSide::For)
+            }
+        }
+
+        if let Some(ref mut against_ai) = self.game.against_ai {
+            if against_ai.has_won() {
+                self.state = AppState::Finished(AiSide::Against)
+            }
+        }
     }
 
     pub fn on_key(&mut self, code: KeyCode) {
+        if let KeyCode::Esc = code {
+            self.should_quit = true;
+            return;
+        };
+
         let mut rng = rand::thread_rng();
         match &self.state {
             AppState::PlayerInput(ai_side) => match code {
@@ -190,7 +208,6 @@ impl App<'_> {
                 _ => {}
             },
             AppState::Play => match code {
-                KeyCode::Esc => self.should_quit = true,
                 KeyCode::Tab => {
                     // Change turn
                     if let Some(ref mut side) = self.game.get_turn() {
@@ -290,6 +307,7 @@ impl App<'_> {
                 }
                 _ => {}
             },
+            AppState::Finished(_) => {}
         }
     }
 }
