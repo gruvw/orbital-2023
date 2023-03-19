@@ -2,6 +2,7 @@ use tui::{
     backend::Backend,
     layout::{Alignment, Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
+    text::Span,
     widgets::{Block, Borders, Gauge, Paragraph},
 };
 
@@ -12,15 +13,18 @@ use crate::app::data::{
 };
 
 fn capture_from(capture: &Capture) -> Paragraph {
-    Paragraph::new(capture.count().to_string())
-        .style(Style::default().fg(capture.ai_side.color()))
-        .alignment(Alignment::Center)
+    Paragraph::new(Span::styled(
+        capture.count().to_string(),
+        Style::default().add_modifier(Modifier::BOLD),
+    ))
+    .style(Style::default().fg(capture.ai_side.color()))
+    .alignment(Alignment::Center)
 }
 
 impl Game {
     pub fn draw_captures<B: Backend>(&self, f: &mut tui::Frame<B>, rect: Rect) {
         let block = Block::default()
-            .title("Captures")
+            .title(" Captures ")
             .title_alignment(Alignment::Left)
             .borders(Borders::ALL);
         f.render_widget(block, rect);

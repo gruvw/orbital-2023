@@ -1,3 +1,5 @@
+use crate::app::App;
+
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event},
     execute,
@@ -12,8 +14,6 @@ use tui::{
     backend::{Backend, CrosstermBackend},
     Terminal,
 };
-
-use crate::app::App;
 
 pub fn run(tick_rate: Duration) -> Result<(), Box<dyn Error>> {
     // Setup terminal

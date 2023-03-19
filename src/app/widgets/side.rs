@@ -10,7 +10,7 @@ use crate::app::data::game::{AiSide, Game};
 impl Game {
     pub fn draw_side<B: Backend>(&self, f: &mut tui::Frame<B>, rect: Rect, ai_side: AiSide) {
         let title_block = Block::default()
-            .title(ai_side.name())
+            .title(format!(" {} ", ai_side.name()))
             .title_alignment(match ai_side {
                 AiSide::For => Alignment::Left,
                 AiSide::Against => Alignment::Right,

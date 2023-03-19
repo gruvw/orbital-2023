@@ -2,13 +2,10 @@ mod data;
 mod widgets;
 
 use crossterm::event::KeyCode;
-use itertools::Itertools;
+
 use tui::{
     backend::Backend,
-    layout::{Alignment, Constraint, Direction, Layout, Rect},
-    style::{Color, Modifier, Style},
-    text::{Span, Spans, Text},
-    widgets::{Block, Borders, List, ListItem, Paragraph},
+    layout::{Constraint, Direction, Layout, Rect},
     Frame,
 };
 use unicode_width::UnicodeWidthStr;
@@ -23,17 +20,22 @@ pub trait Drawable {
 }
 enum InputMode {
     Normal,
-    Editing,
+    Insert,
 }
 
-/// App holds the state of the application
+enum AppState {
+    PlayerInput(AiSide),
+    VPNPositions,
+    CapturePositions,
+}
+
 pub struct App<'a> {
     title: Title<'a>,
     game: Game,
     /// Current value of the input box
     // input: String,
     // /// Current input mode
-    // input_mode: InputMode,
+    input_mode: InputMode,
     // /// History of recorded messages
     // messages: Vec<String>,
     pub should_quit: bool,
@@ -45,9 +47,7 @@ impl App<'_> {
         App {
             title: Title::new("Welcome to the best Game CyberConnect!"),
             game,
-            // input: String::new(),
-            // input_mode: InputMode::Normal,
-            // messages: Vec::new(),
+            input_mode: InputMode::Normal,
             should_quit: false,
         }
     }
@@ -86,6 +86,7 @@ impl App<'_> {
         self.game.draw_progress(f, progress_chunks[1]);
         self.game.draw_side(f, progress_chunks[2], AiSide::Against);
         self.game.draw_captures(f, chunks[2]);
+        self.game.draw_race(f, chunks[3]);
         // self.game.for_ai.draw(self, f, progress_chunks[0]);
         // self.game.against_ai.draw(self, f, progress_chunks[2]);
 
@@ -173,7 +174,13 @@ impl App<'_> {
 }
 
 impl App<'_> {
-    pub fn on_tick(&mut self) {}
+    pub fn on_tick(&mut self) {
+        if let Some(race) = &self.game.race {
+            if race.is_finished() {
+                self.game.race = None;
+            }
+        }
+    }
 
     pub fn on_key(&mut self, code: KeyCode) {
         // match self.input_mode {

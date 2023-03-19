@@ -21,10 +21,9 @@
 - [ ] Gauge (points)
 - [ ] which team turn
 - [ ] Possible key inputs
-- [ ] Nb player on captures
-- [ ] Race: display current race point of position and gain (with timer on screen)
+- [X] Nb player on captures
+- [X] Race: display current race point of position and gain (with timer on screen)
 - [ ] Quit confirm (pop up blocking)
-- [ ] Pause
 
 ## Others
 
@@ -32,4 +31,5 @@
 - [ ] Avantages passifs équipe minoritaire
 - [ ] Capture multiplier for center
 - [ ] Points gain detail at end of turn (one side or none)
+- [ ] Pause
 - [ ] README

@@ -31,7 +31,7 @@ fn gauge_from(game: &Game, ai_side: AiSide) -> Gauge {
 impl Game {
     pub fn draw_progress<B: Backend>(&self, f: &mut tui::Frame<B>, rect: Rect) {
         let block = Block::default()
-            .title("Progress")
+            .title(" Progress ")
             .style(Style::default().fg(Color::Yellow))
             .title_alignment(Alignment::Center)
             .borders(Borders::ALL);
