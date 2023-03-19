@@ -52,7 +52,9 @@ pub struct App<'a> {
 impl App<'_> {
     pub fn new() -> App<'static> {
         App {
-            title: Title::new("Welcome to the best Game CyberConnect!"),
+            title: Title::new(
+                "Welcome to CyberConnect!    Fight against the other team to control the AI \"Lucy\".    You have many funny mechanics to discover along the way :)    Have Fun !",
+            ),
             game: Game::new(),
             state: AppState::PlayerInput(AiSide::For),
             should_quit: false,
@@ -249,12 +251,16 @@ impl App<'_> {
                         if let Some(ref mut against_ai) = self.game.against_ai {
                             match c {
                                 '1' => {
-                                    for_ai.advance(RACE_POINTS);
-                                    self.game.race = None;
+                                    if let Some(_) = self.game.race {
+                                        for_ai.advance(RACE_POINTS);
+                                        self.game.race = None;
+                                    }
                                 }
                                 '0' => {
-                                    against_ai.advance(RACE_POINTS);
-                                    self.game.race = None;
+                                    if let Some(_) = self.game.race {
+                                        against_ai.advance(RACE_POINTS);
+                                        self.game.race = None;
+                                    }
                                 }
 
                                 '5' => for_ai.retreat(1),
